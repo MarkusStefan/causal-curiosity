@@ -38,7 +38,7 @@ class CNNDecoder(nn.Module):
         self.deconv3 = nn.ConvTranspose2d(32, 16, kernel_size=3, stride=2, padding=1, output_padding=1)   # 32→64
         self.act3 = nn.ReLU()
         self.deconv4 = nn.ConvTranspose2d(16, channels, kernel_size=3, stride=2, padding=1, output_padding=1)  # 64→128
-        # self.act4 = nn.Sigmoid()  # constrain output to [0,1]
+        self.act4 = nn.Sigmoid()  # constrain output to [0,1] for valid image pixel values
 
         self.dec = nn.Sequential(
             self.fc1,
@@ -53,7 +53,7 @@ class CNNDecoder(nn.Module):
             self.deconv3,
             self.act3,
             self.deconv4,
-            # self.act4,
+            self.act4,
         )
 
     def forward(self, z):
