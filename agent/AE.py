@@ -1,11 +1,16 @@
+import torch
+from torch import nn
+
+from encoder import CNNEncoder
+from decoder import CNNDecoder
 
 
+class AutoEncoder2d(nn.Module):
 
-class AutoEncoder2d():
-
-    def __init__(self):
-        self.encoder = None
-        self.decoder = None
+    def __init__(self, shape=(128, 128, 3), latent_dim=256):
+        super().__init__()
+        self.encoder = CNNEncoder(input_shape=shape, latent_dim=latent_dim)
+        self.decoder = CNNDecoder(output_shape=shape, latent_dim=latent_dim)
         
 
     def forward(self, x):
