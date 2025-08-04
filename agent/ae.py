@@ -20,9 +20,9 @@ class AutoEncoder2d(nn.Module):
         :param x: Input tensor.
         :return: Reconstructed tensor.
         """
-        z = self.encoder(x)
+        z, mu, logvar = self.encoder(x)
         x = self.decoder(z)
-        return x
+        return x, mu, logvar
     
 
 class VariationalAutoEncoder2d(nn.Module):

@@ -61,3 +61,10 @@ where:
 - \(K\) = kernel size
 - \(S\) = stride
 - \(F\) = number of filters
+
+
+# VAE
+## Encoder
+- learn additional parameters (mean and variance) for each latent variable
+- use a reparameterization trick to sample from the learned distribution
+- typically consists of several convolutional layers followed by fully connected layers
