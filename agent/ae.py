@@ -20,9 +20,9 @@ class AutoEncoder2d(nn.Module):
         :param x: Input tensor.
         :return: Reconstructed tensor.
         """
-        z, mu, logvar = self.encoder(x)
+        z = self.encoder(x)
         x = self.decoder(z)
-        return x, mu, logvar
+        return x
     
 
 class VariationalAutoEncoder2d(nn.Module):
@@ -33,11 +33,11 @@ class VariationalAutoEncoder2d(nn.Module):
         
     def forward(self, x):
         """
-        Forward pass through the variational autoencoder.
+        Forward pass through the autoencoder.
         
         :param x: Input tensor.
         :return: Reconstructed tensor.
         """
-        z = self.encoder(x)
+        z, mu, logvar = self.encoder(x)
         x = self.decoder(z)
-        return x
+        return x, mu, logvar

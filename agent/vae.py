@@ -1,29 +1,25 @@
-import torch 
+import torch
 from torch import nn
-from torch.nn import functional as F
+
+from encoder import  CNNVariationalEncoder
+from decoder import  CNNVariationalDecoder
 
 
+    
 
-
-class VAE(nn.Module):
-    def __init__(self, encoder, decoder):
-        super(VAE, self).__init__()
-        self.encoder = encoder
-        self.decoder = decoder
-
-    def encode(self, x):
-        return self.encoder(x)
-
-    def decode(self, z):
-        return self.decoder(z)
-
-    def reparameterize(self, mu, logvar):
-        std = torch.exp(0.5 * logvar)
-        eps = torch.randn_like(std)
-        return mu + eps * std
-
+class VariationalAutoEncoder2d(nn.Module):
+    def __init__(self, shape=(128, 128, 3), latent_dim=256):
+        super().__init__()
+        self.encoder = CNNVariationalEncoder(input_shape=shape, latent_dim=latent_dim)
+        self.decoder = CNNVariationalDecoder(output_shape=shape, latent_dim=latent_dim)
+        
     def forward(self, x):
-        mu, logvar = self.encode(x)
-        z = self.reparameterize(mu, logvar)
-        recon_x = self.decode(z)
-        return recon_x, mu, logvar
+        """
+        Forward pass through the autoencoder.
+        
+        :param x: Input tensor.
+        :return: Reconstructed tensor.
+        """
+        z, mu, logvar = self.encoder(x)
+        x = self.decoder(z)
+        return x, mu, logvar
