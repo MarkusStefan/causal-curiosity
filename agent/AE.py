@@ -21,7 +21,7 @@ class AutoEncoder2d(nn.Module):
         :return: Reconstructed tensor.
         """
         z = self.encoder(x)
-        x  self.decoder(z)
+        x = self.decoder(z)
         return x
     
 
