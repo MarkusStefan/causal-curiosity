@@ -62,6 +62,8 @@ class CNNDecoder(nn.Module):
     
 
 
+
+
 class CNNVariationalDecoder(nn.Module):
     def __init__(self, output_shape=(128, 128, 3), latent_dim=256):
         super().__init__()

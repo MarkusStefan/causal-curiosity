@@ -146,6 +146,8 @@ class CNNVariationalEncoder(nn.Module):
 
 
 
+
+
 # class CNNEncoder_(nn.Module):
 #     def __init__(self, env, latent_dim=256, *args, **kwargs):
 #         super().__init__(*args, **kwargs)
