@@ -72,38 +72,38 @@ class CNNVariationalDecoder(nn.Module):
         assert width == 128, "Output should be 128x128 for this config"
         
         self.latent_dim = latent_dim
-        
-        # Based on the encoder, the final convolutional feature map is 8x8 with 128 channels
-        initial_res = 8
-        initial_channels = 128
-        
-        # The encoder's bottleneck was: flattened_dim_in = 8*8*128, flattened_dim_out = 4096
-        # So we need to reverse this.
-        self.initial_fc = nn.Linear(latent_dim, 4096)
+        self.initial_res = 8  # matches encoder bottleneck
+        self.initial_channels = 128  # must match final conv output of encoder
+
+        self.fc1 = nn.Linear(latent_dim, 1024)
         self.act1 = nn.ReLU()
-        self.unflatten = nn.Unflatten(1, (initial_channels, initial_res, initial_res))
+        self.fc2 = nn.Linear(1024, self.initial_res * self.initial_res * self.initial_channels)
+        self.act2 = nn.ReLU()
+        self.unflatten = nn.Unflatten(1, (self.initial_channels, self.initial_res, self.initial_res))
         
         # Now, the upsampling convolutional layers (ConvTranspose2d)
         # Note: input channels must match output channels of the previous layer
-        self.deconv1 = nn.ConvTranspose2d(initial_channels, 64, kernel_size=3, stride=2, padding=1, output_padding=1)  # 8x8 -> 16x16
-        self.act2 = nn.ReLU()
-        self.deconv2 = nn.ConvTranspose2d(64, 32, kernel_size=3, stride=2, padding=1, output_padding=1)   # 16x16 -> 32x32
+        self.deconv1 = nn.ConvTranspose2d(self.initial_channels, 64, kernel_size=3, stride=2, padding=1, output_padding=1)  # 8x8 -> 16x16
         self.act3 = nn.ReLU()
-        self.deconv3 = nn.ConvTranspose2d(32, 16, kernel_size=3, stride=2, padding=1, output_padding=1)   # 32x32 -> 64x64
+        self.deconv2 = nn.ConvTranspose2d(64, 32, kernel_size=3, stride=2, padding=1, output_padding=1)   # 16x16 -> 32x32
         self.act4 = nn.ReLU()
+        self.deconv3 = nn.ConvTranspose2d(32, 16, kernel_size=3, stride=2, padding=1, output_padding=1)   # 32x32 -> 64x64
+        self.act5 = nn.ReLU()
         self.deconv4 = nn.ConvTranspose2d(16, channels, kernel_size=3, stride=2, padding=1, output_padding=1) # 64x64 -> 128x128
         self.normalize = nn.Sigmoid()  # Sigmoid to scale pixels to [0, 1]
     
         self.dec = nn.Sequential(
-            self.initial_fc,
+            self.fc1,
             self.act1,
+            self.fc2,
+            self.act2,
             self.unflatten,
             self.deconv1,
-            self.act2,
-            self.deconv2,
             self.act3,
-            self.deconv3,
+            self.deconv2,
             self.act4,
+            self.deconv3,
+            self.act5,
             self.deconv4,
             self.normalize
         )

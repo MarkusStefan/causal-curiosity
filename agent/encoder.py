@@ -49,6 +49,7 @@ class CNNEncoder(nn.Module):
         flattened_dim_in = 8 * 8 * nr_filters_out  # = 2048
         flattened_dim_out = flattened_dim_in // 2  # = 1024
         self.bottleneck_fc1 = nn.Linear(flattened_dim_in, flattened_dim_out)
+        self.act5 = nn.ReLU()
         self.bottleneck_fc2 = nn.Linear(flattened_dim_out, latent_dim)
 
         self.enc = nn.Sequential(
@@ -62,6 +63,7 @@ class CNNEncoder(nn.Module):
             self.act4,
             self.flatten,
             self.bottleneck_fc1,
+            self.act5,
             self.bottleneck_fc2,
         )
 
